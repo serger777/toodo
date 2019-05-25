@@ -1,0 +1,6 @@
+.todo-list .list-group-item{
+    padding: 5px;
+}
+.todo-list{
+    max-width: 380px;
+}

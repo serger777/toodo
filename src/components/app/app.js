@@ -14,7 +14,9 @@ export default class App extends Component {
             this.createTodoItem('Drink coffe'),
             this.createTodoItem('Make Awesome App'),
             this.createTodoItem('Drink')
-        ]
+        ],
+        filter: "",
+        status: 'all'
     };
 
     createTodoItem(label) {
@@ -39,44 +41,7 @@ export default class App extends Component {
             }
         });
     };
-    onChangeInput = (e) => {
-        console.log(e.target.value);
-        const regInput = new RegExp(e.target.value, 'i');
-        const arrSearch  = [];
-        let oldData;
-        this.setState(({todoData}) => {
 
-            if(oldData==[]){
-                console.log(todoData);
-                todoData= oldData
-            }else{
-                oldData = todoData;
-            }
-
-            console.log(oldData);
-            let newArray =[]
-            oldData.forEach(item=>{
-               if(regInput.test(item.label)){
-                   arrSearch.push(item.id);
-               }
-
-           })
-            arrSearch.forEach(id=>{
-                const idx = todoData.findIndex((el)=>el.id===id);
-                console.log(idx);
-                newArray=[
-                  todoData[idx]
-                ]
-
-
-            })
-            console.log(newArray);
-            return{
-                todoData:newArray
-            }
-        })
-
-    }
 
     toggleProperty(arr, id, propName) {
 
@@ -88,8 +53,6 @@ export default class App extends Component {
             newItem,
             ...arr.slice(idx + 1)
         ];
-
-
     }
 
     onToggleDone = (id) => {
@@ -98,7 +61,7 @@ export default class App extends Component {
                 todoData: this.toggleProperty(todoData, id, 'done')
             }
         })
-    }
+    };
 
     onToggleImportant = (id) => {
         this.setState(({todoData}) => {
@@ -107,7 +70,7 @@ export default class App extends Component {
             }
 
         })
-    }
+    };
     addItem = (text) => {
         const newItem = this.createTodoItem(text)
         this.setState(({todoData}) => {
@@ -123,19 +86,54 @@ export default class App extends Component {
 
     };
 
+    search(items, filter) {
+        if (filter.length === 0) {
+            return items
+        }
+        return items.filter((item) => {
+            return item.label
+                .toLowerCase().indexOf(filter.toLowerCase()) > -1;
+        })
+    }
+
+    status(items, status) {
+        switch (status) {
+            case "all":
+                return items;
+            case 'active':
+                return items.filter((item) => !item.done);
+            case 'done':
+                return items.filter((item) => item.done);
+            default:
+                return items;
+        }
+    }
+
+    onChangeInput = (filter) => {
+        this.setState({filter});
+    };
+
+    onStatusFilter=(status)=>{
+        this.setState({status})
+    }
 
     render() {
+        const {todoData, filter, status} = this.state;
+        const visibleItems = this.status(
+            this.search(todoData, filter), status);
         const doneCount = this.state.todoData
             .filter((el) => el.done).length;
         const todoCount = this.state.todoData.length - doneCount;
 
         return (
-            <div>
+            <div className="todo-wrap">
                 <AppHeader todo={todoCount} done={doneCount}/>
-                <SearchPanel onChangeInput = {this.onChangeInput}/>
-                <ItemStatusFilter/>0
+                <SearchPanel onChangeInput={this.onChangeInput}/>
+                <ItemStatusFilter status={status}
+                                  onStatusFilter={this.onStatusFilter}
+                />
                 <TodoList
-                    todos={this.state.todoData}
+                    todos={visibleItems}
                     onDeleted={this.deleteItem}
                     onToggleImportant={this.onToggleImportant}
                     onToggleDone={this.onToggleDone}

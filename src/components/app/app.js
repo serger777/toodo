@@ -5,7 +5,7 @@ import TodoList from '../todo-list';
 import SearchPanel from '../search-panel';
 import ItemStatusFilter from '../item-status-filter';
 import AddItem from '../add-item';
-
+import './app.css'
 
 export default class App extends Component {
     maxId = 1;
@@ -128,10 +128,13 @@ export default class App extends Component {
         return (
             <div className="todo-wrap">
                 <AppHeader todo={todoCount} done={doneCount}/>
-                <SearchPanel onChangeInput={this.onChangeInput}/>
-                <ItemStatusFilter status={status}
-                                  onStatusFilter={this.onStatusFilter}
-                />
+                <div className="search-block">
+                    <SearchPanel onChangeInput={this.onChangeInput}/>
+                    <ItemStatusFilter status={status}
+                                      onStatusFilter={this.onStatusFilter}
+                    />
+                </div>
+
                 <TodoList
                     todos={visibleItems}
                     onDeleted={this.deleteItem}

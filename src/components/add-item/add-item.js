@@ -31,7 +31,7 @@ export default class AddItem extends Component {
                        placeholder="enter value"
                        value={this.state.label} />
                        < button type="submit" className="add-item btn btn-sm btn-outline-secondary red">
-                           Добавить элемент
+                           Добавить
                            </button>
                            </form>
 
